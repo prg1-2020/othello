@@ -287,9 +287,14 @@ object OthelloLib {
   /////////
 
   // 1. minimaxEval
-  // 目的：
+  // 目的：minimax法に基づいたゲームの評価
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    if(gameOver(game)) return countDiff(game)
+    if(depth == 0) return heuristic(game)
+    val nextBoards = validMoves(game._1, game._2).map(applyMove(game._1, game._2, _))
+    if(nextBoards.length == 0) return minimaxEval(heuristic, depth - 1, (game._1, opponent(game._2)))
+    if(game._2 == Black) nextBoards.foldLeft(Float.NegativeInfinity)((v, g) => max(v, minimaxEval(heuristic, depth - 1, (g._1, opponent(g._2)))))
+    else nextBoards.foldLeft(Float.PositiveInfinity)((v, g) => min(v, minimaxEval(heuristic, depth - 1, (g._1, opponent(g._2)))))
   }
 
   // 2. minimax
