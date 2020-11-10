@@ -290,18 +290,20 @@ object OthelloLib {
   // 目的：minimax法に基づいたゲームの評価
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
     if(gameOver(game)) return countDiff(game)
-    if(depth == 0) return heuristic(game)
+    if(depth <= 0) return heuristic(game)
     val nextBoards = validMoves(game._1, game._2).map(applyMove(game._1, game._2, _))
     if(nextBoards.length == 0) return minimaxEval(heuristic, depth - 1, (game._1, opponent(game._2)))
-    if(game._2 == Black) nextBoards.foldLeft(Float.NegativeInfinity)((v, g) => max(v, minimaxEval(heuristic, depth - 1, (g._1, opponent(g._2)))))
-    else nextBoards.foldLeft(Float.PositiveInfinity)((v, g) => min(v, minimaxEval(heuristic, depth - 1, (g._1, opponent(g._2)))))
+    if(game._2 == Black) nextBoards.foldLeft(Int.MinValue)((v, g) => max(v, minimaxEval(heuristic, depth - 1, g)))
+    else nextBoards.foldLeft(Int.MaxValue)((v, g) => min(v, minimaxEval(heuristic, depth - 1, g)))
   }
 
   // 2. minimax
-  // 目的：
+  // 目的：最適な手をminimax法で求める
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
     game =>
-      (1, 1)
+      val nextBoards = validMoves(game._1, game._2).map(x => (x, minimaxEval(heuristic, depth - 1, applyMove(game._1, game._2, x))))
+      if(game._2 == Black) nextBoards.foldLeft(((0, 0), Int.MinValue))((x, g) => if(x._2 > g._2) x else g)._1
+      else nextBoards.foldLeft(((0, 0), Int.MaxValue))((x, g) => if(x._2 < g._2) x else g)._1
   }
 
   // 3. alphabetaEval
@@ -330,7 +332,7 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  playLoop(newGame, firstMove, minimax(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
   // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
