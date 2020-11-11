@@ -335,7 +335,7 @@ object OthelloLib {
   }
 
   // 3. alphabetaEval
-  // 目的：
+  // 目的：alphabeta法に従い、ゲームの状態を数値評価
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
     if(depth == 0 || gameOver(game)) heuristic(game)
     else {
@@ -370,7 +370,7 @@ object OthelloLib {
   }
 
   // 4. alphabeta
-  // 目的：
+  // 目的：alphabeta法に従い、最適な手を返す関数
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
     game =>
       val (board, player) = game
