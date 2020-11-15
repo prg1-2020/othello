@@ -315,7 +315,6 @@ object OthelloLib {
      val nextPos:List[Position] = validMoves(board, player)
      val posAndScore:List[(Position, Int)] = nextPos.foldLeft(Nil:List[(Position, Int)])((x, childPos) =>
         (childPos, minimaxEval(heuristic, depth-1, applyMove(board, player, childPos))) :: x)
-     println(posAndScore)
      player match{
      case Black => posAndScore.foldLeft(((0, 0), Int.MinValue))((x, pos) => if (x._2<pos._2) pos else x)._1
      case White => posAndScore.foldLeft(((0, 0), Int.MaxValue))((x, pos) => if (x._2>pos._2) pos else x)._1
@@ -368,8 +367,6 @@ object OthelloLib {
       val nextPos:List[Position] = validMoves(board, player)
       val posAndScore:List[(Position, Int)] = nextPos.foldLeft(Nil:List[(Position, Int)])((x, childPos) =>
         (childPos, alphabetaEval(heuristic, depth-1, Int.MinValue, Int.MaxValue, applyMove(board, player, childPos))) :: x)
-
-      println(posAndScore)
       player match{
       case Black => posAndScore.foldLeft(((0, 0), Int.MinValue))((x, pos) => if (x._2<pos._2) pos else x)._1
       case White => posAndScore.foldLeft(((0, 0), Int.MaxValue))((x, pos) => if (x._2>pos._2) pos else x)._1
