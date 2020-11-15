@@ -287,29 +287,94 @@ object OthelloLib {
   /////////
 
   // 1. minimaxEval
-  // 目的：
+  // 目的：minimax法に基づいて盤面を評価する
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    if (gameOver(game)) countDiff(game)
+    else if (depth == 0) heuristic(game)
+    else{
+      val (board, player) = game
+      val nextPos = validMoves(board, player)
+      if (nextPos == Nil) minimaxEval(heuristic, depth, (board, opponent(player)))
+      else {
+        val nextBoards = nextPos.foldLeft(Nil:List[Board])((x, pos) => applyMove(board, player, pos)._1 :: x)
+        player match {
+          case Black =>
+            nextBoards.foldLeft(Int.MinValue)((x, bor) => max(x, minimaxEval(heuristic, depth-1, (bor, White))))
+          case White =>
+            nextBoards.foldLeft(Int.MaxValue)((x, bor) => min(x, minimaxEval(heuristic, depth-1, (bor, Black))))
+        }
+      }
+    }
   }
 
   // 2. minimax
-  // 目的：
+  // 目的：minimax法に基づいて最適な手を求める
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+   game =>
+     val (board, player) = game
+     val nextPos:List[Position] = validMoves(board, player)
+     val posAndScore:List[(Position, Int)] = nextPos.foldLeft(Nil:List[(Position, Int)])((x, childPos) =>
+        (childPos, minimaxEval(heuristic, depth-1, applyMove(board, player, childPos))) :: x)
+     println(posAndScore)
+     player match{
+     case Black => posAndScore.foldLeft(((0, 0), Int.MinValue))((x, pos) => if (x._2<pos._2) pos else x)._1
+     case White => posAndScore.foldLeft(((0, 0), Int.MaxValue))((x, pos) => if (x._2>pos._2) pos else x)._1
+     }
   }
 
   // 3. alphabetaEval
-  // 目的：
+  // 目的：alphabeta法に基づいて盤面を評価する
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    if (gameOver(game)) countDiff(game)
+    else if (depth == 0) heuristic(game)
+    else{
+      val (board, player) = game
+      val nextPos = validMoves(board, player)
+      if (nextPos == Nil) alphabetaEval(heuristic, depth, a, b, (board, opponent(player)))
+      else{
+        val nextBoards = nextPos.foldLeft(Nil:List[Board])((x, pos) => applyMove(board, player, pos)._1 :: x)
+        player match {
+          case Black =>{
+            var v = Int.MinValue
+            var alpha = a
+            for (child <- nextBoards){
+              v = max(v, alphabetaEval(heuristic, depth-1, alpha, b, (child, White)))
+              alpha = max(alpha, v)
+              if (alpha >= b) return v 
+            }
+            return v
+          }
+          case White =>{        
+            var v = Int.MaxValue
+            var beta = b
+            for (child <- nextBoards){
+              v = min(v, alphabetaEval(heuristic, depth-1, a, beta, (child, Black)))
+              beta = min(beta, v)
+              if (beta <= a) return v 
+            }
+            return v
+          }
+
+        }
+      }
+    }
   }
 
   // 4. alphabeta
-  // 目的：
+  // 目的：alphabeta法に基づいて最適な手を求める
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game =>{
+      val (board, player) = game
+      val nextPos:List[Position] = validMoves(board, player)
+      val posAndScore:List[(Position, Int)] = nextPos.foldLeft(Nil:List[(Position, Int)])((x, childPos) =>
+        (childPos, alphabetaEval(heuristic, depth-1, Int.MinValue, Int.MaxValue, applyMove(board, player, childPos))) :: x)
+
+      println(posAndScore)
+      player match{
+      case Black => posAndScore.foldLeft(((0, 0), Int.MinValue))((x, pos) => if (x._2<pos._2) pos else x)._1
+      case White => posAndScore.foldLeft(((0, 0), Int.MaxValue))((x, pos) => if (x._2>pos._2) pos else x)._1
+      }
+    }
   }
 }
 
@@ -334,30 +399,30 @@ object OthelloMain extends App {
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff, 3)
+白の戦略：minimax(countDiff, 5)
+黒 vs. 白の数：19 vs 45
+実行時間 (Total time)：13s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 3)
+白の戦略：alphabeta(countDiff, 5)
+黒 vs. 白の数：19 vs 45
+実行時間 (Total time)：4s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff, 5)
+白の戦略：minimax(countDiff, 3)
+黒 vs. 白の数：18 vs 46
+実行時間 (Total time)：16s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 5)
+白の戦略：alphabeta(countDiff, 3)
+黒 vs. 白の数：18 vs 46
+実行時間 (Total time)：3s
 
-考察：
-
+考察：実験1、2の比較と実験3。4の比較より、枝刈りによって結果は変化せず、実行時間はalphabetaの方がminimaxよりも早いことがわかる。
+　　　また、実験3、4からわかるように、深さの大きさと勝負に勝つかどうかについてはそれぞれの深さや先行・後攻に影響される相性があるようであり、一概に深さが大きいものが強いとは言えないようであった。
 
 */
