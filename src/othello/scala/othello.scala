@@ -311,13 +311,13 @@ object OthelloLib {
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
     if(gameOver(game)) return countDiff(game)
     if(depth <= 0) return heuristic(game)
-    val nextBoards = validMoves(game._1, game._2).map(applyMove(game._1, game._2, _))
-    if(nextBoards.length == 0) return alphabetaEval(heuristic, depth - 1, a, b, (game._1, opponent(game._2)))
+    val nextMoves = validMoves(game._1, game._2)
+    if(nextMoves.length == 0) return alphabetaEval(heuristic, depth - 1, a, b, (game._1, opponent(game._2)))
     if(game._2 == Black) {
       var v = Int.MinValue
       var alpha = a
-      nextBoards.foreach(child => {
-        v = max(v, alphabetaEval(heuristic, depth - 1, alpha, b, child))
+      nextMoves.foreach(child => {
+        v = max(v, alphabetaEval(heuristic, depth - 1, alpha, b, applyMove(game._1, game._2, child)))
         alpha = max(alpha, v)
         if(alpha >= b) return v
       })
@@ -325,8 +325,8 @@ object OthelloLib {
     } else {
       var v = Int.MaxValue
       var beta = b
-      nextBoards.foreach(child => {
-        v = min(v, alphabetaEval(heuristic, depth - 1, a, beta, child))
+      nextMoves.foreach(child => {
+        v = min(v, alphabetaEval(heuristic, depth - 1, a, beta, applyMove(game._1, game._2, child)))
         beta = min(beta, v)
         if(beta <= a) return v
       })
@@ -335,7 +335,7 @@ object OthelloLib {
   }
 
   // 4. alphabeta
-  // 目的：
+  // 目的：最適な手をalphabeta法で求める
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
     game =>
       val nextBoards = validMoves(game._1, game._2).map(x => (x, alphabetaEval(heuristic, depth - 1, Int.MinValue, Int.MaxValue, applyMove(game._1, game._2, x))))
@@ -356,39 +356,39 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  // playLoop(newGame, minimax(countDiff, 5), alphabeta(countDiff, 5))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+  playLoop(newGame, minimax(countDiff, 8), minimax(countDiff, 1))
 }
 
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff, 5)
+白の戦略：minimax(countDiff, 5)
+黒 vs. 白の数： 38, 26
+実行時間 (Total time)： 18s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 5)
+白の戦略：alphabeta(countDiff, 5)
+黒 vs. 白の数： 38, 26
+実行時間 (Total time)： 4s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff, 5)
+白の戦略：alphabeta(countDiff, 5)
+黒 vs. 白の数： 38, 26
+実行時間 (Total time)：12s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 8)
+白の戦略：alphabeta(countDiff, 6)
+黒 vs. 白の数： 51, 13
+実行時間 (Total time)： 165s
 
 考察：
-
-
+alphabeta法はminimaxでは一生終わらないようにさえ見える深さ8検索においても、現実的な範囲内で終わった
+戦略を変えない時、alphabetaとminimaxでは結果が変わらない
 */
