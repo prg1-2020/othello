@@ -422,12 +422,32 @@ object OthelloLib {
   def minimax(heuristic: Heuristic, depth: Int): Strategy = { game =>
     val (board, player) = game
     val validList = validMoves(board, player)
-    validList.foldLeft((Int.MinValue, (-1, -1): Position))((tmp, pos) => {
-      val (tmp_max, tmp_pos) = tmp
-      val score =
-        -minimaxEval(heuristic, depth, applyMove(board, player, pos))
-      (max(tmp_max, score), pos)
-    })
+    player match {
+      case Black => {
+        validList
+          .foldLeft((Int.MinValue, (-1, -1)))((tmp, pos) => {
+            val (tmp_max, tmp_pos) = tmp
+            val score =
+              minimaxEval(heuristic, depth - 1, applyMove(board, player, pos))
+
+            if (tmp_max < score) (score, pos)
+            else tmp
+          })
+          ._2
+      }
+      case White => {
+        validList
+          .foldLeft((Int.MaxValue, (-1, -1)))((tmp, pos) => {
+            val (tmp_max, tmp_pos) = tmp
+            val score =
+              minimaxEval(heuristic, depth - 1, applyMove(board, player, pos))
+
+            if (tmp_max > score) (score, pos)
+            else tmp
+          })
+          ._2
+      }
+    }
   }
 
   // 3. alphabetaEval
@@ -455,13 +475,13 @@ object OthelloMain extends App {
   // どれか1つのコメントを外す
 
   // 黒, 白ともに firstMove
-  playLoop(newGame, firstMove, firstMove)
+  // playLoop(newGame, firstMove, firstMove)
 
   // 黒：人間, 白：firstMove
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
   // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
