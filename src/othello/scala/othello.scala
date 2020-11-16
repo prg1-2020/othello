@@ -307,9 +307,31 @@ object OthelloLib {
   }
 
   // 3. alphabetaEval
-  // 目的：
+  // 目的：alphabeta法に基づいたゲームの評価
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    if(gameOver(game)) return countDiff(game)
+    if(depth <= 0) return heuristic(game)
+    val nextBoards = validMoves(game._1, game._2).map(applyMove(game._1, game._2, _))
+    if(nextBoards.length == 0) return alphabetaEval(heuristic, depth - 1, a, b, (game._1, opponent(game._2)))
+    if(game._2 == Black) {
+      var v = Int.MinValue
+      var alpha = a
+      nextBoards.foreach(child => {
+        v = max(heuristic(game), alphabetaEval(heuristic, depth - 1, a, b, child))
+        alpha = max(alpha, v)
+        if(alpha >= b) return v
+      })
+      v
+    } else {
+      var v = Int.MaxValue
+      var beta = b
+      nextBoards.foreach(child => {
+        v = min(heuristic(game), alphabetaEval(heuristic, depth - 1, a, b, child))
+        beta = min(beta, v)
+        if(beta <= a) return v
+      })
+      v
+    }
   }
 
   // 4. alphabeta
