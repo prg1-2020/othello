@@ -289,14 +289,54 @@ object OthelloLib {
   // 1. minimaxEval
   // 目的：
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    val (board, player) = game
+    val nextPlayer = opponent(player)
+    if (gameOver(game)) countDiff(game) //gameover
+    else if (depth == 0) countDiff(game) //depth =0
+    else if (validMoves(board,player).size == 0) minimaxEval(heuristic,depth,(board,nextPlayer)) //skip
+    else {
+        //minimax
+        player match{
+            case Black=>{
+                validMoves(board, player).foldLeft(Int.MinValue)((v,pos)=> max(v,minimaxEval(heuristic, depth-1, applyMove(board,player,pos))))
+            }
+            case White => {
+                validMoves(board, player).foldLeft(Int.MaxValue)((v,pos)=> min(v,minimaxEval(heuristic,depth-1,applyMove(board,player,pos))))
+            }
+        }
+    }
   }
 
   // 2. minimax
   // 目的：
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game =>{
+        val (board, player) = game
+        val nextPlayer = opponent(player)
+        val valid_pos_list = validMoves(board, player)
+        player match{
+            case Black =>{
+                val init = -100
+                valid_pos_list.foldLeft[(Int,Position)]((init,(-1,-1)))(
+                    (v, pos) => {
+                        val mme = minimaxEval(heuristic, depth-1, applyMove(board, player, pos))
+                        if(v._1 < mme) (mme,pos)
+                        else v
+                    }
+                )._2
+            }
+            case White =>{
+                val init = 100
+                valid_pos_list.foldLeft[(Int,Position)]((init,(-1,-1)))(
+                    (v, pos) => {
+                        val mme = minimaxEval(heuristic, depth-1, applyMove(board, player, pos))
+                        if(v._1 > mme) (mme,pos)
+                        else v
+                    }
+                )._2
+            }
+        }
+    }
   }
 
   // 3. alphabetaEval
@@ -319,13 +359,13 @@ object OthelloMain extends App {
   // どれか1つのコメントを外す
 
   // 黒, 白ともに firstMove
-  // playLoop(newGame, firstMove, firstMove)
+   //playLoop(newGame, firstMove, firstMove)
 
   // 黒：人間, 白：firstMove
-  // playLoop(newGame, human, firstMove)
+   //playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
   // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
