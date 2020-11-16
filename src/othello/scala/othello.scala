@@ -317,7 +317,7 @@ object OthelloLib {
       var v = Int.MinValue
       var alpha = a
       nextBoards.foreach(child => {
-        v = max(heuristic(game), alphabetaEval(heuristic, depth - 1, a, b, child))
+        v = max(v, alphabetaEval(heuristic, depth - 1, alpha, b, child))
         alpha = max(alpha, v)
         if(alpha >= b) return v
       })
@@ -326,7 +326,7 @@ object OthelloLib {
       var v = Int.MaxValue
       var beta = b
       nextBoards.foreach(child => {
-        v = min(heuristic(game), alphabetaEval(heuristic, depth - 1, a, b, child))
+        v = min(v, alphabetaEval(heuristic, depth - 1, a, beta, child))
         beta = min(beta, v)
         if(beta <= a) return v
       })
@@ -338,7 +338,9 @@ object OthelloLib {
   // 目的：
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
     game =>
-      (1, 1)
+      val nextBoards = validMoves(game._1, game._2).map(x => (x, alphabetaEval(heuristic, depth - 1, Int.MinValue, Int.MaxValue, applyMove(game._1, game._2, x))))
+      if(game._2 == Black) nextBoards.foldLeft(((0, 0), Int.MinValue))((x, g) => if(x._2 > g._2) x else g)._1
+      else nextBoards.foldLeft(((0, 0), Int.MaxValue))((x, g) => if(x._2 < g._2) x else g)._1
   }
 }
 
@@ -354,10 +356,10 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  playLoop(newGame, firstMove, minimax(countDiff, 4))
+  playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+  playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
 }
 
 // 5. 実験結果
