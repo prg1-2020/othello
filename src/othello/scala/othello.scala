@@ -307,10 +307,10 @@ object OthelloLib {
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
     game => {
       val (board, player) = game
-      val nextpose = validMoves(game)
-      val poseval = nextpose.map((np:Position) => (np,minimaxEval(heuristic,depth-1,applyMove(board, player, pos))))
-      val whitebest = poseval.foldLeft(100)((init,x) => if(init > x._2) x else init)
-      val blackbest = poseval.foldLeft(-100)((init,x) => if(init < x._2) x else init)
+      val nextpose = validMoves(board,player)
+      val poseval = nextpose.map((np:Position) => (np,minimaxEval(heuristic,depth-1,applyMove(board, player, np))))
+      val whitebest = poseval.foldLeft((0,0),100)((init,x) => if(init._2 > x._2) x else init)
+      val blackbest = poseval.foldLeft((0,0),-100)((init,x) => if(init._2 < x._2) x else init)
       if(player == Black) blackbest._1
       else whitebest._1
     }
