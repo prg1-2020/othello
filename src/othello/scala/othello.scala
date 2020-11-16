@@ -287,16 +287,31 @@ object OthelloLib {
   /////////
 
   // 1. minimaxEval
-  // 目的：
+  // 目的：minmax法に基づいてゲームの状態を評価する
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    val (board,player) = game
+    if(gameOver(game)) countDiff(game)
+    else if(depth == 0) heuristic(game)
+    else if(validMoves(board,player) == Nil) minimaxEval(heuristic,depth,(board,opponent(player)))
+    else{
+      val point = (validMoves(board, player).map((pos:Position) => applyMove(board,player,pos)._1)).map((b:Board) => minimaxEval(heuristic, depth - 1, game))
+        if(player == Black) point.foldLeft(point.head)((xs,x) => if(x >= xs) x else xs) else point.foldLeft(point.head)((xs,x) => if(x <= xs) x else xs)
+      }
   }
 
   // 2. minimax
-  // 目的：
+  // 目的：minmax法に基づいて最適な手を求める
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    (game:Game) => {
+      val (board,player) = game
+      val nextPos = validMoves(board, player).map(pos => (minimaxEval(heuristic, depth - 1, applyMove(board,player,pos)),pos))
+      if(player == Black){
+        nextPos.foldLeft(nextPos.head)((xs,x) => if(x._1 >= xs._1) x else xs)._2
+      }
+      else{
+        nextPos.foldLeft(nextPos.head)((xs,x) => if(x._1 <= xs._1) x else xs)._2
+      }
+    }
   }
 
   // 3. alphabetaEval
