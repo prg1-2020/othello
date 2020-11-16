@@ -287,26 +287,61 @@ object OthelloLib {
   /////////
 
   // 1. minimaxEval
-  // 目的：
+  // 目的： minimax 法に基づいてゲームの状態を評価する
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    if(depth == 0 || gameOver(game)) heuristic(game)
+    else {
+      val (board, player) = game
+      val nextposList = validMoves(board, player)
+      if (nextposList == Nil) minimaxEval(heuristic, depth, (board, opponent(player)))
+      else {
+        val init = if(player == Black) - 100 else 100
+        val fnc = if(player == Black) max _ else min _
+        nextposList.foldLeft(init)(
+          (s, pos) => fnc(s, minimaxEval(heuristic, depth - 1, applyMove(board, player, pos)))
+        )
+      }
+    }
   }
 
   // 2. minimax
-  // 目的：
+  // 目的： minimax 法に基づいて最適な手を求める
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
     game =>
-      (1, 1)
+      val (board, player) = game
+      val nextposList = validMoves(board, player)
+      player match {
+        case Black => {
+          val init = -100
+          nextposList.foldLeft[(Int, Position)]((init, (-1, -1)))(
+            (s, pos) => {
+              val eval = minimaxEval(heuristic, depth - 1, applyMove(board, player, pos))
+              if(s._1 < eval) (eval, pos)
+              else s
+            }
+          )._2
+        }
+        case White => {
+          val init = 100
+          nextposList.foldLeft[(Int, Position)]((init, (-1, -1)))(
+            (s, pos) => {
+              val eval = minimaxEval(heuristic, depth - 1, applyMove(board, player, pos))
+              if(s._1 > eval) (eval, pos)
+              else s
+            }
+          )._2
+        }
+      }
   }
 
   // 3. alphabetaEval
-  // 目的：
+  // 目的： alpha-beta 法に基づいてゲームの状態を評価する
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
     0
   }
 
   // 4. alphabeta
-  // 目的：
+  // 目的： alpha-beta 法に基づいて最適な手を求める
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
     game =>
       (1, 1)
