@@ -359,7 +359,7 @@ object OthelloMain extends App {
   // playLoop(newGame, minimax(countDiff, 5), alphabeta(countDiff, 5))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  playLoop(newGame, minimax(countDiff, 8), minimax(countDiff, 1))
+  playLoop(newGame, firstMove, alphabeta(countDiff, 4))
 }
 
 // 5. 実験結果
@@ -391,4 +391,9 @@ object OthelloMain extends App {
 考察：
 alphabeta法はminimaxでは一生終わらないようにさえ見える深さ8検索においても、現実的な範囲内で終わった
 戦略を変えない時、alphabetaとminimaxでは結果が変わらない
+
+結果について:
+minimaxEval関数において、skipが起こる時にdepthから1を引くかひかないかで結果が変わる
+x._2 > g._2のような判定を行っている時、等号を含めるかどうかでこれも結果が変わる
+(ここら辺は実装依存といった感じ?)
 */
