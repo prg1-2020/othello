@@ -289,27 +289,97 @@ object OthelloLib {
   // 1. minimaxEval
   // 目的：
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    val (board, player)=game
+    val opp = if(player==Black) White else Black
+
+    if(depth==0){
+      return if(player==Black) heuristic(game) else -heuristic(game)
+    }
+    else {
+      val (s, p) = posList.foldLeft((-1000, (-1, -1):Position))(
+        (s, p) => {
+          val (cMax, cHand) = s
+          if(outflanks(board, player, p)){
+            val cs = -minimaxEval(heuristic, depth-1, applyMove(board, player, p))
+            if(cs>cMax) (cs, p)
+            else s
+          }
+          else s
+        }
+      )
+
+      if(s== -1000){
+        return -minimaxEval(heuristic, depth-1, (board, opp))
+      }
+      else s
+    }
   }
 
   // 2. minimax
   // 目的：
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game =>{
+      val (board, player)=game
+      posList.foldLeft((-1000, (-1, -1):Position))(
+        (s, p) =>{
+          val (cMax, cHand)=s
+          if(outflanks(board, player, p)){
+            val cs = -minimaxEval(heuristic, depth, applyMove(board, player, p))
+            if(cs>cMax) (cs, p)
+            else s
+          }
+          else s
+        }
+      )._2
+    }
   }
 
   // 3. alphabetaEval
   // 目的：
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    val (board, player) = game
+    val opp = if(player==Black) White else Black
+
+    if(depth==0){
+      return if(player==Black)heuristic(game) else -heuristic(game)
+    }
+    else{
+      val (s, p) = posList.foldLeft((-1000, (-1, -1):Position))(
+        (s, p) => {
+          val (cMax, cHand) = s
+          if(cMax < b && outflanks(board, player, p)){
+            val cs = -alphabetaEval(heuristic, depth-1, -b, -max(a, cMax), applyMove(board, player, p))
+            if(cs > cMax) (cs, p)
+            else s
+          }
+          else s
+        }
+      )
+
+      if(s== -1000){
+        return -alphabetaEval(heuristic, depth-1, -b, -a, (board, opp))
+      }
+      else s
+    }
   }
 
   // 4. alphabeta
   // 目的：
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game =>{
+      val (board, player) = game
+      posList.foldLeft((-1000, (-1, -1):Position))(
+        (s, p) => {
+          val (cMax, cHand) = s
+          if(outflanks(board, player, p)){
+            val cs = -alphabetaEval(heuristic, depth, -1000, -cMax, applyMove(board, player, p))
+            if(cs > cMax) (cs, p)
+            else s
+          }
+          else s
+        }
+      )._2
+    }
   }
 }
 
@@ -325,7 +395,7 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  // playLoop(newGame, minimax(countDiff, 6), minimax(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
   // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
@@ -334,30 +404,31 @@ object OthelloMain extends App {
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：深さ4の minimax 法
+白の戦略：深さ4の minimax 法
+黒 vs. 白の数：38 vs 26
+実行時間 (Total time)：14s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：深さ4の alpha-beta 法
+白の戦略：深さ4の alpha-beta 法
+黒 vs. 白の数：38 vs 26
+実行時間 (Total time)：4s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：深さ6の minimax 法
+白の戦略：深さ4の minimax 法
+黒 vs. 白の数：55 vs 3
+実行時間 (Total time)：610s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：深さ6の alpha-beta 法
+白の戦略：深さ4の alpha-beta 法
+黒 vs. 白の数：55 vs 3
+実行時間 (Total time)：8s
 
 考察：
-
+minimaxよりalphabetaの方が実行時間が短い。
+minimaxでもalphabetaでも得られる戦績は同じだった。
 
 */
