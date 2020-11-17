@@ -289,27 +289,163 @@ object OthelloLib {
   // 1. minimaxEval
   // 目的：
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    if (gameOver(game)) countDiff(game)
+    else if (depth == 0) heuristic(game)
+    else {
+      val (board, player) = game
+      val moves = validMoves(board, player)
+      val nextGames = if (moves.isEmpty) {
+        List((
+          board, opponent(player)
+        ))
+      } else {
+        moves.map(
+          applyMove(
+            board, player, _
+          )
+        )
+      }
+      val estimate = nextGames.map(
+        minimaxEval(heuristic, depth - 1, _)
+      )
+      if (player == Black) estimate.max
+      else estimate.min
+    }
   }
 
   // 2. minimax
   // 目的：
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game => {
+      val (board, player) = game
+      val moves = validMoves(board, player)
+      if (player == Black) {
+        val (_, position) = moves.foldRight(
+            (Int.MinValue, (1, 1))
+          )(
+            (position, cur) => {
+              val (max, argmax) = cur
+              val estimate = minimaxEval(
+                heuristic,
+                depth - 1,
+                applyMove(board, player, position)
+              )
+              if (estimate > max) (estimate, position)
+              else cur
+            }
+          )
+        position
+      } else {
+        val (_, position) = moves.foldRight(
+            (Int.MaxValue, (1, 1))
+          )(
+            (position, cur) => {
+              val (min, argmin) = cur
+              val estimate = minimaxEval(
+                heuristic,
+                depth - 1,
+                applyMove(board, player, position)
+              )
+              if (estimate < min) (estimate, position)
+              else cur
+            }
+          )
+        position
+      }
+    }
   }
 
   // 3. alphabetaEval
   // 目的：
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    if (gameOver(game)) countDiff(game)
+    else if (depth == 0) heuristic(game)
+    else {
+      val (board, player) = game
+      val moves = validMoves(board, player)
+      val nextGames = if (moves.isEmpty) {
+        List((
+          board, opponent(player)
+        ))
+      } else {
+        moves.map(
+          applyMove(
+            board, player, _
+          )
+        )
+      }
+      if (player == Black) {
+        def helper(list: List[Game], a: Int): Int = {
+          list match {
+            case Nil => a
+            case x :: xs => {
+              val estimate = alphabetaEval(heuristic, depth - 1, a, b, x)
+              if (estimate >= b) b
+              else helper(xs, max(a, estimate))
+            }
+          }
+        }
+        helper(nextGames, a)
+      } else {
+        def helper(list: List[Game], b: Int): Int = {
+          list match {
+            case Nil => b
+            case x :: xs => {
+              val estimate = alphabetaEval(heuristic, depth - 1, a, b, x)
+              if (estimate <= a) a
+              else helper(xs, min(b, estimate))
+            }
+          }
+        }
+        helper(nextGames, b)
+      }
+    }
   }
 
   // 4. alphabeta
   // 目的：
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game => {
+      val (board, player) = game
+      val moves = validMoves(board, player)
+      if (player == Black) {
+        def helper(list: List[Position], a: Int, p: Position): Position = {
+          list match {
+            case Nil => p
+            case x :: xs => {
+              val estimate = alphabetaEval(
+                heuristic,
+                depth - 1,
+                a,
+                Int.MaxValue,
+                applyMove(board, player, x)
+              )
+              if (a < estimate) helper(xs, estimate, x)
+              else helper(xs, a, p)
+            }
+          }
+        }
+        helper(moves, Int.MinValue, (1, 1))
+      } else {
+        def helper(list: List[Position], b: Int, p: Position): Position = {
+          list match {
+            case Nil => p
+            case x :: xs => {
+              val estimate = alphabetaEval(
+                heuristic,
+                depth - 1,
+                Int.MinValue,
+                b,
+                applyMove(board, player, x)
+              )
+              if (b > estimate) helper(xs, estimate, x)
+              else helper(xs, b, p)
+            }
+          }
+        }
+        helper(moves, Int.MaxValue, (1, 1))
+      }
+    }
   }
 }
 
@@ -334,30 +470,37 @@ object OthelloMain extends App {
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(5)
+白の戦略：minimax(5)
+黒 vs. 白の数：38, 26
+実行時間 (Total time)：14 s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(5)
+白の戦略：alphabeta(5)
+黒 vs. 白の数：38, 26
+実行時間 (Total time)：2 s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(6)
+白の戦略：alphabeta(6)
+黒 vs. 白の数：12, 52
+実行時間 (Total time)：7 s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(6)
+白の戦略：alphabeta(5)
+黒 vs. 白の数：39, 25
+実行時間 (Total time)：6 s
+
+実験５
+黒の戦略：alphabeta(4)
+白の戦略：alphabeta(5)
+黒 vs. 白の数：43, 21
+実行時間 (Total time)：2 s
 
 考察：
-
+alpha-beta 法は minimax 法と比較して極めて高速である。
+読む深さと最終的なスコアは、あまり強い相関は見られない。
 
 */
