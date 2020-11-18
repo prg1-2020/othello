@@ -397,7 +397,7 @@ object OthelloLib {
                 minimaxEval(
                   heuristic,
                   depth - 1,
-                  applyMove(board, Black, pos)
+                  applyMove(board, player, pos)
                 )
               )
             )
@@ -408,7 +408,7 @@ object OthelloLib {
                 minimaxEval(
                   heuristic,
                   depth - 1,
-                  applyMove(board, White, pos)
+                  applyMove(board, player, pos)
                 )
               )
             )
@@ -439,11 +439,11 @@ object OthelloLib {
       case White => {
         validList
           .foldLeft((Int.MaxValue, (-1, -1)))((tmp, pos) => {
-            val (tmp_max, tmp_pos) = tmp
+            val (tmp_min, tmp_pos) = tmp
             val score =
               minimaxEval(heuristic, depth - 1, applyMove(board, player, pos))
 
-            if (tmp_max > score) (score, pos)
+            if (tmp_min > score) (score, pos)
             else tmp
           })
           ._2
@@ -467,7 +467,7 @@ object OthelloLib {
       if (validList == Nil)
         return alphabetaEval(
           heuristic,
-          depth - 1,
+          depth,
           a,
           b,
           (board, opponent(player))
@@ -516,7 +516,47 @@ object OthelloLib {
   // 4. alphabeta
   // 目的：
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = { game =>
-    (1, 1)
+    val (board, player) = game
+    val validList = validMoves(board, player)
+
+    player match {
+      case Black => {
+        validList
+          .foldLeft((Int.MinValue, (-1, -1)))((tmp, pos) => {
+            val (tmp_max, tmp_pos) = tmp
+            val score =
+              alphabetaEval(
+                heuristic,
+                depth - 1,
+                tmp_max,
+                Int.MaxValue,
+                applyMove(board, player, pos)
+              )
+
+            if (tmp_max < score) (score, pos)
+            else tmp
+          })
+          ._2
+      }
+      case White => {
+        validList
+          .foldLeft((Int.MaxValue, (-1, -1)))((tmp, pos) => {
+            val (tmp_min, tmp_pos) = tmp
+            val score =
+              alphabetaEval(
+                heuristic,
+                depth - 1,
+                Int.MinValue,
+                tmp_min,
+                applyMove(board, player, pos)
+              )
+
+            if (tmp_min > score) (score, pos)
+            else tmp
+          })
+          ._2
+      }
+    }
   }
 }
 
@@ -532,10 +572,10 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+  playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
 }
 
 // 5. 実験結果
