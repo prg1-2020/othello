@@ -434,6 +434,7 @@ object OthelloLib {
             else tmp
           })
           ._2
+
       }
       case White => {
         validList
@@ -459,7 +460,57 @@ object OthelloLib {
       b: Int,
       game: Game
   ): Int = {
-    0
+    val (board, player) = game
+    if (depth == 0 || gameOver(game)) return heuristic(game)
+    else {
+      val validList = validMoves(board, player)
+      if (validList == Nil)
+        return alphabetaEval(
+          heuristic,
+          depth - 1,
+          a,
+          b,
+          (board, opponent(player))
+        )
+      else {
+        player match {
+          case Black => {
+            var alpha = a
+            validList.foreach(pos => {
+              alpha = max(
+                alpha,
+                alphabetaEval(
+                  heuristic,
+                  depth - 1,
+                  alpha,
+                  b,
+                  applyMove(board, player, pos)
+                )
+              )
+              if (alpha > b) return alpha
+            })
+            return alpha
+          }
+          case White => {
+            var beta = b
+            validList.foreach(pos => {
+              beta = min(
+                beta,
+                alphabetaEval(
+                  heuristic,
+                  depth - 1,
+                  a,
+                  beta,
+                  applyMove(board, player, pos)
+                )
+              )
+              if (a > beta) return beta
+            })
+            return beta
+          }
+        }
+      }
+    }
   }
 
   // 4. alphabeta
