@@ -320,16 +320,64 @@ object OthelloLib {
   }
 
   // 3. alphabetaEval
-  // 目的：
+  // 目的：alpha-beta法に基づいてゲームの状態を評価する
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    val (board, player) = game
+    if (gameOver(game)) countDiff(game)
+    else if (depth <= 0) heuristic(game)
+    else if (validMoves(board, player) == Nil) alphabetaEval(heuristic, depth, a, b, (board, opponent(player)))
+    else {
+      player match {
+        case Black => {
+          var al = a
+          var v = Int.MinValue
+          for (x <- validMoves(board, player)) {
+            v = max(v, alphabetaEval(heuristic, depth-1, al, b, applyMove(board, player, x)))
+            al = max(al, v)
+            if (al >= b) return v
+          }
+          return v
+        }
+        case White => {
+          var be = b
+          var v = Int.MaxValue
+          for (x <- validMoves(board, player)) {
+            v = min(v, alphabetaEval(heuristic, depth-1, a, be, applyMove(board, player, x)))
+            be = min(be, v)
+            if (be <= a) return v
+          }
+          return v
+        }
+      }
+    }
   }
 
   // 4. alphabeta
-  // 目的：
+  // 目的：alpha-beta法に基づいて最適な手を求める
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game => {
+      val (board, player) = game
+      var al = Int.MinValue
+      var be = Int.MaxValue
+      player match {
+        case Black => {
+          validMoves(board, player).foldLeft[(Int, Position)]((al, (0, 0))) (
+            (x, pos) => {
+              if (x._1 < alphabetaEval(heuristic, depth-1, al, be,  applyMove(board, player, pos))) (alphabetaEval(heuristic, depth-1, al, be,  applyMove(board, player, pos)), pos)
+              else x
+            }
+          )._2
+        }
+        case White => {
+          validMoves(board, player).foldLeft[(Int, Position)]((be, (0, 0))) (
+            (x, pos) => {
+              if (x._1 > alphabetaEval(heuristic, depth-1, al, be,  applyMove(board, player, pos))) (alphabetaEval(heuristic, depth-1, al, be,  applyMove(board, player, pos)), pos)
+              else x
+            }
+          )._2
+        }
+      }
+    }
   }
 }
 
@@ -345,39 +393,42 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  //playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+  //playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
 }
 
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff, 4)
+白の戦略：minimax(countDiff, 4)
+黒 vs. 白の数：36 vs 28
+実行時間 (Total time)：5s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 4)
+白の戦略：alphabeta(countDiff, 4)
+黒 vs. 白の数：36 vs 28
+実行時間 (Total time)：2s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff, 6)
+白の戦略：minimax(countDiff, 4)
+黒 vs. 白の数：62 vs 0
+実行時間 (Total time)：74s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 6)
+白の戦略：alphabeta(countDiff, 4)
+黒 vs. 白の数：62 vs 0
+実行時間 (Total time)：5s
 
-考察：
+考察：minimaxとalphabetaでオセロの結果は変わらない
+　　　minimaxは深さが増えると極端に実行時間が遅くなる
+　　　alphabetaの方がminimaxより実行時間が短い、特に深さが増えるほど差が顕著に現れる
+　　　
 
 
 */
