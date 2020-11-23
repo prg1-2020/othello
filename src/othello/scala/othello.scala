@@ -339,7 +339,7 @@ object OthelloLib {
         var beta = b
         for(pos <- validMoves(board, player)){
           v = min(v, alphabetaEval(heuristic,depth - 1,a,beta,applyMove(board,player,pos)))
-          beta = min(v, betaa)
+          beta = min(v, beta)
          if(a >= beta) v
         }
         v
@@ -353,6 +353,7 @@ object OthelloLib {
     game =>{
       val (board, player) = game
       val nextpose = validMoves(board,player)
+      (0,0)
     }
   }
 }
