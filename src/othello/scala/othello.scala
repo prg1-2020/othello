@@ -5,7 +5,7 @@
 3. project othello と入力し、return を押す
 4. run と入力し、return を押す
 5. プログラムを変更後、もう一度実行したいときは run と入力し、return を押す
-*/
+ */
 
 package othello
 
@@ -35,25 +35,85 @@ object OthelloLib {
 
   // 盤面の初期値
   val initBoard: Board =
-    List(List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
-         List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
-         List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
-         List(Empty, Empty, Empty, White, Black, Empty, Empty, Empty),
-         List(Empty, Empty, Empty, Black, White, Empty, Empty, Empty),
-         List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
-         List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
-         List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty))
+    List(
+      List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
+      List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
+      List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
+      List(Empty, Empty, Empty, White, Black, Empty, Empty, Empty),
+      List(Empty, Empty, Empty, Black, White, Empty, Empty, Empty),
+      List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
+      List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty),
+      List(Empty, Empty, Empty, Empty, Empty, Empty, Empty, Empty)
+    )
 
   // マス目の座標のリスト
   val posList: List[Position] =
-    List((1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1),
-      (1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2), (7, 2), (8, 2),
-      (1, 3), (2, 3), (3, 3), (4, 3), (5, 3), (6, 3), (7, 3), (8, 3),
-      (1, 4), (2, 4), (3, 4), (4, 4), (5, 4), (6, 4), (7, 4), (8, 4),
-      (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (6, 5), (7, 5), (8, 5),
-      (1, 6), (2, 6), (3, 6), (4, 6), (5, 6), (6, 6), (7, 6), (8, 6),
-      (1, 7), (2, 7), (3, 7), (4, 7), (5, 7), (6, 7), (7, 7), (8, 7),
-      (1, 8), (2, 8), (3, 8), (4, 8), (5, 8), (6, 8), (7, 8), (8, 8))
+    List(
+      (1, 1),
+      (2, 1),
+      (3, 1),
+      (4, 1),
+      (5, 1),
+      (6, 1),
+      (7, 1),
+      (8, 1),
+      (1, 2),
+      (2, 2),
+      (3, 2),
+      (4, 2),
+      (5, 2),
+      (6, 2),
+      (7, 2),
+      (8, 2),
+      (1, 3),
+      (2, 3),
+      (3, 3),
+      (4, 3),
+      (5, 3),
+      (6, 3),
+      (7, 3),
+      (8, 3),
+      (1, 4),
+      (2, 4),
+      (3, 4),
+      (4, 4),
+      (5, 4),
+      (6, 4),
+      (7, 4),
+      (8, 4),
+      (1, 5),
+      (2, 5),
+      (3, 5),
+      (4, 5),
+      (5, 5),
+      (6, 5),
+      (7, 5),
+      (8, 5),
+      (1, 6),
+      (2, 6),
+      (3, 6),
+      (4, 6),
+      (5, 6),
+      (6, 6),
+      (7, 6),
+      (8, 6),
+      (1, 7),
+      (2, 7),
+      (3, 7),
+      (4, 7),
+      (5, 7),
+      (6, 7),
+      (7, 7),
+      (8, 7),
+      (1, 8),
+      (2, 8),
+      (3, 8),
+      (4, 8),
+      (5, 8),
+      (6, 8),
+      (7, 8),
+      (8, 8)
+    )
 
   // ゲームの状態
   type Game = (Board, Player)
@@ -70,7 +130,11 @@ object OthelloLib {
   // board の pos に player が石を置いたときに、相手の石を取り囲むかを判定する
   def outflanks(board: Board, player: Player, pos: Position): Boolean = {
     val (x, y) = pos
-    (boardRef(board, pos) == Empty) && (!(flippedPositions(board, player, pos) == Nil))
+    (boardRef(board, pos) == Empty) && (!(flippedPositions(
+      board,
+      player,
+      pos
+    ) == Nil))
   }
 
   // player の敵を返す
@@ -81,7 +145,9 @@ object OthelloLib {
   // board 上の player の石の数を返す
   def countPieces(game: Game): Int = {
     val (board, player) = game
-    board.foldRight(0)((row, r) => row.foldRight(0)((s, r) => if (s == player) r + 1 else r) + r)
+    board.foldRight(0)((row, r) =>
+      row.foldRight(0)((s, r) => if (s == player) r + 1 else r) + r
+    )
   }
 
   // マス目の中身を文字列に変換する
@@ -113,11 +179,17 @@ object OthelloLib {
   def gameOver(game: Game): Boolean = {
     val (board, player) = game
     !(posList.foldRight(false)((p, b) => b || outflanks(board, player, p)) ||
-      posList.foldRight(false)((p, b) => b || outflanks(board, opponent(player), p)))
+      posList.foldRight(false)((p, b) =>
+        b || outflanks(board, opponent(player), p)
+      ))
   }
 
   // board の pos に player が石を置いたときに、色が反転するマス目の座標を返す
-  def flippedPositions(board: Board, player: Player, pos: Position): List[Position] = {
+  def flippedPositions(
+      board: Board,
+      player: Player,
+      pos: Position
+  ): List[Position] = {
 
     // Position の足し算
     def posPlus(pos: Position, x: Int, y: Int): Position = {
@@ -128,7 +200,12 @@ object OthelloLib {
     // pos から (x, y) 方向に向かって反転する点を探す
     def trim(pos: Position, x: Int, y: Int): List[Position] = {
 
-      def trimAux(pos: Position, x: Int, y: Int, list: List[Position]): List[Position] = {
+      def trimAux(
+          pos: Position,
+          x: Int,
+          y: Int,
+          list: List[Position]
+      ): List[Position] = {
         val nextPos = posPlus(pos, x, y)
         nextPos match {
           case (nextx, nexty) =>
@@ -143,12 +220,18 @@ object OthelloLib {
     }
 
     trim(pos, 0, 1) ++ trim(pos, 1, 1) ++ trim(pos, 1, 0) ++ trim(pos, 1, -1) ++
-    trim(pos, 0, -1) ++ trim(pos, -1, -1) ++ trim(pos, -1, 0) ++ trim(pos, -1, 1)
+      trim(pos, 0, -1) ++ trim(pos, -1, -1) ++ trim(pos, -1, 0) ++ trim(
+        pos,
+        -1,
+        1
+      )
   }
 
   // player が石を置ける board 上の座標のリストを返す
   def validMoves(board: Board, player: Player): List[Position] = {
-    posList.filter(outflanks(board, player, _)).filter(boardRef(board, _) == Empty)
+    posList
+      .filter(outflanks(board, player, _))
+      .filter(boardRef(board, _) == Empty)
   }
 
   // board の pos に player が石を置いた結果、得られる状態を返す
@@ -157,43 +240,48 @@ object OthelloLib {
     // 行数の分だけ makeRow を行い、その結果を使って盤面を作る
     def makeBoard(board: Board, flipList: List[Position], y: Int): Board = {
       board match {
-        case Nil => Nil
+        case Nil     => Nil
         case r :: rs =>
           // y 行目の座標のうち、色が反転するもののリスト
-          val flipListY = flipList.filter(p => p match { case (px, py) => py == y })
+          val flipListY =
+            flipList.filter(p => p match { case (px, py) => py == y })
           makeRow(r, flipListY, 1, y) :: makeBoard(rs, flipList, y + 1)
       }
     }
 
     // 反転後の行を作る
-    def makeRow(row: List[Square], flipListY: List[Position], x: Int, y: Int): List[Square] = {
-        row match {
-          case Nil => Nil
-          case square :: squares => {
-            val newSquare =
-              // 反転リストに入っている座標は player
-              if (contain(x, flipListY)) player
-              // player が石を置く場所は player
-              else if (pos == (x, y)) player
-              // それ以外はそのまま
-              else square
-            newSquare :: makeRow(squares, flipListY, x + 1, y)
-          }
+    def makeRow(
+        row: List[Square],
+        flipListY: List[Position],
+        x: Int,
+        y: Int
+    ): List[Square] = {
+      row match {
+        case Nil => Nil
+        case square :: squares => {
+          val newSquare =
+            // 反転リストに入っている座標は player
+            if (contain(x, flipListY)) player
+            // player が石を置く場所は player
+            else if (pos == (x, y)) player
+            // それ以外はそのまま
+            else square
+          newSquare :: makeRow(squares, flipListY, x + 1, y)
         }
+      }
     }
 
     // (x, y) が flipListY に含まれるかを判定
     def contain(x: Int, flipListY: List[Position]): Boolean = {
       flipListY match {
-        case Nil => false
+        case Nil            => false
         case (px, py) :: ps => if (px == x) true else contain(x, ps)
       }
     }
 
     if (!(outflanks(board, player, pos))) {
       throw new Exception("not a valid move")
-    }
-    else {
+    } else {
       // 反転する座標のリスト
       val flipList = flippedPositions(board, player, pos)
       // 反転後の盤面
@@ -213,7 +301,7 @@ object OthelloLib {
     def firstMoveAux(list: List[Position]): Position = {
       val (board, player) = game
       list match {
-        case Nil => throw new Exception("no valid move")
+        case Nil     => throw new Exception("no valid move")
         case p :: ps => if (outflanks(board, player, p)) p else firstMoveAux(ps)
       }
     }
@@ -222,40 +310,38 @@ object OthelloLib {
   }
 
   // 人間のキー入力を受け取る
-  def human: Strategy = {
-    game =>
-      val (board, player) = game
-      val strMove = io.StdIn.readLine().split(' ')
-      val move = (strMove(0).toInt, strMove(1).toInt)
-      if (!(outflanks(board, player, move))) {
-        println("Not a valid move! Please try again.");
-        human(game)
-      }
-      else move
+  def human: Strategy = { game =>
+    val (board, player) = game
+    val strMove = io.StdIn.readLine().split(' ')
+    val move = (strMove(0).toInt, strMove(1).toInt)
+    if (!(outflanks(board, player, move))) {
+      println("Not a valid move! Please try again.");
+      human(game)
+    } else move
   }
 
   // ヒューリスティック
   type Heuristic = Game => Int
 
   // 黒 - 白 の値を返す
-  def countDiff: Heuristic = {
-    game => countPieces(game._1, Black) - countPieces(game._1, White)
+  def countDiff: Heuristic = { game =>
+    countPieces(game._1, Black) - countPieces(game._1, White)
   }
 
   // 戦略の適用
   def applyStrategy(game: Game, strategy: Strategy): Game = {
     val (board, player) = game
     val nextPlayer = opponent(player)
-    if (!(posList.foldRight(false)((p, b) => b || outflanks(board, player, p)))) {
-       printf("skip!\n");
-       (board, nextPlayer)
-    }
-    else {
+    if (
+      !(posList.foldRight(false)((p, b) => b || outflanks(board, player, p)))
+    ) {
+      printf("skip!\n");
+      (board, nextPlayer)
+    } else {
       val pos = strategy(game)
       if (!(outflanks(board, player, pos))) {
         throw new Exception("invalid move")
-      }
-      else {
+      } else {
         applyMove(board, player, pos)
       }
     }
@@ -272,10 +358,14 @@ object OthelloLib {
         else if (whitescore > blackscore) "White"
         else "None"
       drawBoard(board);
-      printf("Black: %d, White: %d, Winner: %s\n", blackscore, whitescore, winner);
+      printf(
+        "Black: %d, White: %d, Winner: %s\n",
+        blackscore,
+        whitescore,
+        winner
+      );
       sys.exit()
-    }
-    else {
+    } else {
       drawBoard(board);
       val newgame = applyStrategy(game, strat1)
       playLoop(newgame, strat2, strat1)
@@ -287,29 +377,186 @@ object OthelloLib {
   /////////
 
   // 1. minimaxEval
-  // 目的：
+  // 目的：minimax法に基づいてゲームの状態を評価する
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    val (board, player) = game;
+    // val oppo = opponent(player);
+
+    if (depth == 0 || gameOver(game)) { //深さ0 or GameOverなら評価
+      return heuristic(game)
+    } else {
+      val validList = validMoves(board, player)
+      if (validList == Nil) { //置ける場所がない（＝スキップ）なら相手側へ
+        return minimaxEval(heuristic, depth, (board, opponent(player)))
+      } else {
+        player match {
+          case Black =>
+            validList.foldLeft(Int.MinValue)((tmp, pos) =>
+              max(
+                tmp,
+                minimaxEval(
+                  heuristic,
+                  depth - 1,
+                  applyMove(board, player, pos)
+                )
+              )
+            )
+          case White =>
+            validList.foldLeft(Int.MaxValue)((tmp, pos) =>
+              min(
+                tmp,
+                minimaxEval(
+                  heuristic,
+                  depth - 1,
+                  applyMove(board, player, pos)
+                )
+              )
+            )
+        }
+      }
+    }
   }
 
   // 2. minimax
-  // 目的：
-  def minimax(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+  // 目的：minimax法に基づいて最適な手を示す
+  def minimax(heuristic: Heuristic, depth: Int): Strategy = { game =>
+    val (board, player) = game
+    val validList = validMoves(board, player)
+    player match {
+      case Black => {
+        validList
+          .foldLeft((Int.MinValue, (-1, -1)))((tmp, pos) => {
+            val (tmp_max, tmp_pos) = tmp
+            val score =
+              minimaxEval(heuristic, depth - 1, applyMove(board, player, pos))
+
+            if (tmp_max < score) (score, pos)
+            else tmp
+          })
+          ._2
+
+      }
+      case White => {
+        validList
+          .foldLeft((Int.MaxValue, (-1, -1)))((tmp, pos) => {
+            val (tmp_min, tmp_pos) = tmp
+            val score =
+              minimaxEval(heuristic, depth - 1, applyMove(board, player, pos))
+
+            if (tmp_min > score) (score, pos)
+            else tmp
+          })
+          ._2
+      }
+    }
   }
 
   // 3. alphabetaEval
-  // 目的：
-  def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+  // 目的：alphabeta法に基づいてゲームの状態を評価する
+  def alphabetaEval(
+      heuristic: Heuristic,
+      depth: Int,
+      a: Int,
+      b: Int,
+      game: Game
+  ): Int = {
+    val (board, player) = game
+    if (depth == 0 || gameOver(game)) return heuristic(game)
+    else {
+      val validList = validMoves(board, player)
+      if (validList == Nil)
+        return alphabetaEval(
+          heuristic,
+          depth,
+          a,
+          b,
+          (board, opponent(player))
+        )
+      else {
+        player match {
+          case Black => {
+            var alpha = a
+            validList.foreach(pos => {
+              alpha = max(
+                alpha,
+                alphabetaEval(
+                  heuristic,
+                  depth - 1,
+                  alpha,
+                  b,
+                  applyMove(board, player, pos)
+                )
+              )
+              if (alpha > b) return alpha
+            })
+            return alpha
+          }
+          case White => {
+            var beta = b
+            validList.foreach(pos => {
+              beta = min(
+                beta,
+                alphabetaEval(
+                  heuristic,
+                  depth - 1,
+                  a,
+                  beta,
+                  applyMove(board, player, pos)
+                )
+              )
+              if (a > beta) return beta
+            })
+            return beta
+          }
+        }
+      }
+    }
   }
 
   // 4. alphabeta
-  // 目的：
-  def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+  // 目的：alphabeta法に基づいて最適な手を求める
+  def alphabeta(heuristic: Heuristic, depth: Int): Strategy = { game =>
+    val (board, player) = game
+    val validList = validMoves(board, player)
+
+    player match {
+      case Black => {
+        validList
+          .foldLeft((Int.MinValue, (-1, -1)))((tmp, pos) => {
+            val (tmp_max, tmp_pos) = tmp
+            val score =
+              alphabetaEval(
+                heuristic,
+                depth - 1,
+                tmp_max,
+                Int.MaxValue,
+                applyMove(board, player, pos)
+              )
+
+            if (tmp_max < score) (score, pos)
+            else tmp
+          })
+          ._2
+      }
+      case White => {
+        validList
+          .foldLeft((Int.MaxValue, (-1, -1)))((tmp, pos) => {
+            val (tmp_min, tmp_pos) = tmp
+            val score =
+              alphabetaEval(
+                heuristic,
+                depth - 1,
+                Int.MinValue,
+                tmp_min,
+                applyMove(board, player, pos)
+              )
+
+            if (tmp_min > score) (score, pos)
+            else tmp
+          })
+          ._2
+      }
+    }
   }
 }
 
@@ -325,39 +572,40 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  playLoop(newGame, alphabeta(countDiff, 6), alphabeta(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+  // playLoop(newGame, alphabeta(countDiff, 6), alphabeta(countDiff, 4))
 }
 
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff,4)
+白の戦略：minimax(countDiff,4)
+黒 vs. 白の数：Black: 36, White: 28, Winner: Black
+実行時間 (Total time)：7s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 5)
+白の戦略：alphabeta(countDiff, 5)
+黒 vs. 白の数：Black: 38, White: 26, Winner: Black
+実行時間 (Total time)：12s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 6)
+白の戦略：alphabeta(countDiff, 6)
+黒 vs. 白の数：Black: 52, White: 12, Winner: Black
+実行時間 (Total time)：25s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 6)
+白の戦略：alphabeta(countDiff, 4)
+黒 vs. 白の数：Black: 62, White: 0, Winner: Black
+実行時間 (Total time)：11s
 
 考察：
-
-
-*/
+minimax法とalphabeta法は高速化の観点で違うだけなので終局したときの盤面は等しかった。
+実行時間は2/3倍程度高速化されていた。
+validMovesなどの実装がO(N^2)で重そうなので改善すればタイムが短縮されそう（高速化othello2では２倍から３倍程度早くなった。）
+ */
