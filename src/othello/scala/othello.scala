@@ -352,8 +352,19 @@ object OthelloLib {
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
     game =>{
       val (board, player) = game
-      val nextpose = validMoves(board,player)
-      (0,0)
+      var a = -100
+      var b = 100
+      var posval: List[(Position,Int)] = Nil
+      for(pos <- validMoves(board,player)){
+        var v = alphabetaEval(heuristic,depth - 1,a,b,applyMove(board,player,pos))
+        if(player == Black) a = max(v,a)
+        else b = min(v,b)
+        posval = posval :+ (pos,v)
+      }
+      val blackbest = posval.foldLeft((0,0),-100)((init,x) => if(init._2 < x._2) x else init)
+      val whitebest = posval.foldLeft((0,0),100)((init,x) => if(init._2 > x._2) x else init)
+      if(player == Black) blackbest._1
+      else whitebest._1
     }
   }
 }
@@ -372,37 +383,44 @@ object OthelloMain extends App {
   // 黒, 白ともに深さ4の minimax 法
   // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
 
+  
   // 黒, 白ともに深さ4の alpha-beta 法
-  // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+   playLoop(newGame, minimax(countDiff, 6), alphabeta(countDiff, 6))
 }
 
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax 深さ４
+白の戦略：minimax 深さ４
+黒 vs. 白の数：36 28
+実行時間 (Total time)：4s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax 深さ6
+白の戦略：minimax 深さ6
+黒 vs. 白の数：52 12
+実行時間 (Total time)：49s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta 深さ４
+白の戦略：alphabeta 深さ４
+黒 vs. 白の数：36 28
+実行時間 (Total time)：3s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta 深さ6
+白の戦略：alphabeta 深さ6
+黒 vs. 白の数：52 12
+実行時間 (Total time)：38s
 
-考察：
+実験5
+黒の戦略：minimax 深さ6
+白の戦略：alphabeta 深さ6
+黒 vs. 白の数：52 12
+実行時間 (Total time)：45s
+
+考察：minimaxとalphabetaは同状況では同じ手を出しているようである。時間はalphabetaが短く、深くすると顕著。
 
 
 */
