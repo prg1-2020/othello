@@ -291,10 +291,9 @@ object OthelloLib {
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
     val (board,player) = game
     if (gameOver(game))  countDiff(game)
-    if (depth == 0) heuristic(game)
+    else if (depth == 0) heuristic(game)
+    else if( validMoves(board, player) == Nil) minimaxEval(heuristic, depth, (board, opponent(player)))
     else {
-      if( validMoves(board, player) == Nil) minimaxEval(heuristic, depth, (board, opponent(player)))
-      else {
         player match{
           case Black => {
         validMoves(board, player).foldLeft(Int.MinValue)((x, pos) => max(x, minimaxEval(heuristic, depth-1, applyMove(board, player, pos))))
@@ -304,7 +303,6 @@ object OthelloLib {
           }
         }
       }
-     }
   }
 
 
@@ -316,8 +314,8 @@ object OthelloLib {
         val (board, player) = game
         val newminimax  = validMoves(board, player).map(p => (p,minimaxEval(heuristic, depth-1, applyMove(board, player,p))))
         player match { 
-          case Black =>  newminimax.foldLeft((0,0),100)((old, newcomer) => if(newcomer._2 > old._2) newcomer ; else old)._1
-          case White =>  newminimax.foldLeft((0,0),-100)((old, newcomer) => if(newcomer._2 < old._2) newcomer ; else old)._1
+          case Black =>  newminimax.foldLeft(newminimax.head)((old, newcomer) => if(newcomer._2 > old._2) newcomer ; else old)._1
+          case White =>  newminimax.foldLeft(newminimax.head)((old, newcomer) => if(newcomer._2 < old._2) newcomer ; else old)._1
         }
       }
    }
@@ -327,16 +325,51 @@ object OthelloLib {
   // 3. alphabetaEval
   // 目的：
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    val (board, player) =game
+    if (gameOver(game)) countDiff(game)
+    else if (depth == 0)     heuristic(game)
+    else if (validMoves(board, player) == Nil) alphabetaEval(heuristic, depth, a, b, (board, opponent(player)))
+    else {
+        player match {
+          case Black => {
+            var v = Int.MinValue
+            var alpha = a
+            for (p <- validMoves(board, player)) {
+              v = max(v, alphabetaEval(heuristic, depth-1, alpha, b, applyMove(board, player, p)))
+              alpha = max(alpha, v)
+              if (alpha >= b) v
+            }
+            v
+          }
+          case White => {
+            var v = Int.MaxValue
+            var beta = b
+            for (p <- validMoves(board, player)){
+              v = min(v, alphabetaEval(heuristic, depth-1, a, beta, applyMove(board, player, p)))
+              beta = min(beta, v)
+              if (beta <= a)  v
+            }
+            v
+          }
+        }
+      }
   }
 
   // 4. alphabeta
   // 目的：
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
-  }
-}
+     (game:Game) =>{
+       val (board,player) = game
+       var alpha = Int.MinValue; var beta = Int.MaxValue
+       val newalphabeta = validMoves(board, player).map(p => (p,alphabetaEval(heuristic, depth-1,alpha,beta, applyMove(board, player,p))))
+       player match{
+         case Black => newalphabeta.foldLeft(newalphabeta.head) ((old,newcomer) => if(newcomer._2>old._2) newcomer;else old)._1
+         case White => newalphabeta.foldLeft(newalphabeta.head) ((old,newcomer) => if(newcomer._2<old._2) newcomer;else old)._1
+       }
+     }
+   }
+ }
+
 
 object OthelloMain extends App {
   import OthelloLib._
@@ -350,39 +383,48 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  //playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
   // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+
+   //playLoop(newGame, minimax(countDiff, 6), minimax(countDiff, 4))
+  
 }
 
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff, 4)
+白の戦略：minimax(countDiff, 4)
+黒 vs. 白の数：            36:28
+実行時間 (Total time)：    8s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 4)
+白の戦略：alphabeta(countDiff, 4)
+黒 vs. 白の数：            36:28
+実行時間 (Total time)：     8s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff, 6)
+白の戦略：minimax(countDiff, 4)
+黒 vs. 白の数：             62:0
+実行時間 (Total time)：      63s
+
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 6)
+白の戦略：alphabeta(countDiff, 4)
+黒 vs. 白の数：             62;0
+実行時間 (Total time)：      66s
+ 
 
-考察：
 
 
-*/
+*/深さが増えると計算時間は長くなる　
+　どちらも結果はほとんど変わらない。
+　深さが深い方が強い
+　
+
+
