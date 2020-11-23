@@ -318,16 +318,52 @@ object OthelloLib {
   }
 
   // 3. alphabetaEval
-  // 目的：
+  // 目的：alpha-beta 法に基づいてゲームの状態を評価する
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    val (board,player) = game
+    if(gameOver(game)) return countDiff(game)
+    if(depth==0) return heuristic(game)
+    if(validMoves(board,player)==Nil) return minimaxEval(heuristic,depth,(board,opponent(player)))
+
+    player match{
+      case Black => 
+        var v = Int.MinValue
+        var A = a
+        for(x <- validMoves(board,player)){
+          v = max(v,alphabetaEval(heuristic,depth-1,A,b,applyMove(board,player,x)))
+          A = max(A,v)
+          if(A >= b) return v
+        }
+        return v
+        
+
+      case White => 
+        var v = Int.MaxValue
+        var B = b
+        for(x <- validMoves(board,player)){
+          v = min(v,alphabetaEval(heuristic,depth-1,a,B,applyMove(board,player,x)))
+          B = min(B,v)
+          if(a >= B) return v
+        }
+        return v
+
+    }
   }
 
   // 4. alphabeta
-  // 目的：
+  // 目的：alpha-beta 法に基づいて最適な手を求める
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
     game =>
-      (1, 1)
+      val (board,player) = game
+      def addvalue2(heuristic:Heuristic,depth:Int,a:Int,be:Int,game:Game,pos:Position):(Position,Int) = {
+        val (b,p) = game
+        (pos,alphabetaEval(heuristic,depth-1,a,be,applyMove(b,p,pos)))
+      }
+      val nextlist = validMoves(board,player).map(addvalue2(heuristic,depth,Int.MinValue,Int.MaxValue,game,_))
+      player match{
+        case Black => nextlist.foldLeft(((0, 0), Int.MinValue))((x, pv) => if (x._2<pv._2) pv else x)._1
+        case White => nextlist.foldLeft(((0, 0), Int.MaxValue))((x, pv) => if (x._2>pv._2) pv else x)._1
+      }
   }
 }
 
@@ -343,39 +379,69 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  // playLoop(newGame, minimax(countDiff, 5), minimax(countDiff, 5))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+   playLoop(newGame, alphabeta(countDiff, 8), alphabeta(countDiff, 8))
 }
 
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax,5
+白の戦略：minimax,5
+黒 vs. 白の数：38 : 26
+実行時間 (Total time)：24s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alpha-beta,5
+白の戦略：alpha-beta,5
+黒 vs. 白の数：38 : 26
+実行時間 (Total time)：6s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alpha-beta,3
+白の戦略：alpha-beta,4
+黒 vs. 白の数：0 : 58
+実行時間 (Total time)：3s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alpha-beta,4
+白の戦略：alpha-beta,5
+黒 vs. 白の数：25 : 39
+実行時間 (Total time)：7s
 
-考察：
+実験５
+黒の戦略：alpha-beta,5
+白の戦略：alpha-beta,6
+黒 vs. 白の数：15 : 49
+実行時間 (Total time)：12s
+
+実験６
+黒の戦略：alpha-beta,4
+白の戦略：alpha-beta,4
+黒 vs. 白の数：36 : 28
+実行時間 (Total time)：3s
+
+実験７
+黒の戦略：alpha-beta,6
+白の戦略：alpha-beta,6
+黒 vs. 白の数：52 : 12
+実行時間 (Total time)：11s
+
+実験８
+黒の戦略：alpha-beta,7
+白の戦略：alpha-beta,7
+黒 vs. 白の数：14 : 50
+実行時間 (Total time)：96s
+
+実験９
+黒の戦略：alpha-beta,8
+白の戦略：alpha-beta,8
+黒 vs. 白の数：63 : 0
+実行時間 (Total time)：128s
+
+考察：実験１、２から、枝刈りの有無は結果には影響しない。実行時間は圧倒的にalpha-betaの方が短い。探索度を変えて行うと、１でも大きい方が全ての実験（３〜５）で勝ったので、探索度が正義。多少先行の方が有利にあるのかもしれないが、実験８では白が勝った。
 
 
 */
