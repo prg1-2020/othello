@@ -287,29 +287,77 @@ object OthelloLib {
   /////////
 
   // 1. minimaxEval
-  // 目的：
+  // 目的：minimax法に基づいてゲームの状態を整数値で評価する
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    val (board, player) = game
+    val validMovesList = validMoves(board, player)
+    if (depth == 0) return heuristic(game)
+    if (gameOver(game)) return  countDiff(game)
+    if (validMovesList == Nil) minimaxEval(heuristic, depth-1 , (board, opponent(player)))
+    else{
+      player match {
+        case Black =>  validMovesList.foldLeft(Int.MinValue)((acc: Int, pos: Position) => max(acc, minimaxEval(heuristic, depth-1, applyMove(board, player, pos))))
+        case White =>  validMovesList.foldLeft(Int.MaxValue)((acc: Int, pos: Position) => min(acc, minimaxEval(heuristic, depth-1, applyMove(board, player, pos))))
+      }
+    }
   }
 
+
   // 2. minimax
-  // 目的：
+  // 目的：minimax法に基づいて最適な手を求める
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game => 
+      val (board, player) = game
+      val list = validMoves(board, player).map(pos => (minimaxEval(heuristic, depth-1, applyMove(board, player, pos)), pos))
+      player match {
+        case Black => (list.foldLeft((Int.MinValue, (0, 0)))((acc, l) => if(acc._1 < l._1) l else acc))._2
+        case White => (list.foldLeft((Int.MaxValue, (0, 0)))((acc, l) => if(acc._1 > l._1) l else acc))._2
+      }  
   }
 
   // 3. alphabetaEval
-  // 目的：
+  // 目的：alphabeat法に基づいてゲームの状態を整数値で評価する
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    val (board, player) = game
+    val validMovesList = validMoves(board, player)
+    if (depth == 0) return heuristic(game)
+    if (gameOver(game)) return  countDiff(game)
+    if (validMovesList == Nil) alphabetaEval(heuristic, depth-1, a, b, (board, opponent(player)))
+    else{
+      player match {
+        case Black => 
+          var v = Int.MinValue
+          var alpha = a
+          for(i <- validMovesList){
+            v = max(v, alphabetaEval(heuristic, depth-1, alpha, b, applyMove(board, player, i)))
+            alpha = max(v, alpha)
+            if(alpha >= b) return v
+          }
+          return v
+        
+        case White => 
+          var v = Int.MaxValue
+          var beta = b
+          for(i <- validMovesList){
+            v = min(v, alphabetaEval(heuristic, depth-1, a, beta, applyMove(board, player, i)))
+            beta = min(v, beta)
+            if(beta <= a) return v
+          }
+          return v
+      }
+    }
   }
 
   // 4. alphabeta
-  // 目的：
+  // 目的：alphabeta法に基づいて最適な手を求める
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
     game =>
-      (1, 1)
+      val (board, player) = game
+      val list = validMoves(board, player).map(pos => (alphabetaEval(heuristic, depth-1, Int.MinValue, Int.MaxValue, applyMove(board, player, pos)), pos))
+      player match {
+        case Black => (list.foldLeft((Int.MinValue, (0, 0)))((acc, l) => if(acc._1 < l._1) l else acc))._2
+        case White => (list.foldLeft((Int.MaxValue, (0, 0)))((acc, l) => if(acc._1 > l._1) l else acc))._2
+      }
   }
 }
 
@@ -325,39 +373,39 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+   playLoop(newGame, minimax(countDiff, 6), minimax(countDiff, 6))
 
   // 黒, 白ともに深さ4の alpha-beta 法
   // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
-}
 
+}
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff, 5)
+白の戦略：minimax(countDiff, 5)
+黒 vs. 白の数： 38 vs 26
+実行時間 (Total time)： 28s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 6)
+白の戦略：alphabeta(countDiff, 6)
+黒 vs. 白の数： 12 vs 52
+実行時間 (Total time)： 14s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 7)
+白の戦略：alphabeta(countDiff, 7)
+黒 vs. 白の数： 14 vs 50
+実行時間 (Total time)： 78s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略： minimax(countDiff, 6)
+白の戦略： minimax(countDiff, 6)
+黒 vs. 白の数：12 vs 52
+実行時間 (Total time)： 182s
 
-考察：
+考察： 深く探索するほど白が有利になる。minimax法では探索の深さが１増えるだけで実行時間が大きく増加するが、alphabeta法では増え幅をかなり抑えられる
 
 
 */
