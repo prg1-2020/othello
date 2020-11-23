@@ -289,27 +289,172 @@ object OthelloLib {
   // 1. minimaxEval
   // 目的：
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    //ゲームオーバで黒-白の枚数差を返す。
+    if(gameOver(game)) return countDiff(game)
+    //深さゼロなら評価を返す。
+    if(depth == 0)     return heuristic(game)
+
+
+    val (board, player) = game
+    val handsAvailable: List[Position] = validMoves(board, player)
+    var nextGame: List[Game] = 
+      //スキップの場合はプレーヤを変更して続行。
+      if(handsAvailable == Nil){
+        (board, opponent(player)) :: Nil
+      }else{
+        handsAvailable.map(applyMove(board, player, _))
+      }
+
+    val nextScores: List[Int] = nextGame.map(minimaxEval(heuristic, depth-1, _))
+
+   if(player == Black)
+    nextScores.max
+   else
+    nextScores.min
   }
 
   // 2. minimax
   // 目的：
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game => {
+      val (board, player) = game
+      //可能な手のリスト
+      val handsAvailable: List[Position] = validMoves(board, player)
+      //(可能な手，可能な盤面の評価値)のリストを作成
+      var handAndScore: List[(Position, Int)] = Nil
+      
+      for(thisHand: Position <- handsAvailable){
+        
+        val thisScore: Int = minimaxEval(
+          heuristic,
+          depth-1,
+          applyMove(board, player, thisHand)
+        )
+
+        handAndScore = (thisHand, thisScore) :: handAndScore
+      }
+
+      var (maxHand, max) = handAndScore.head
+      var (minHand, min) = handAndScore.head
+
+      //MEMO : inf, -infを用いればthisHandとthisScoreだけ必要で以下のfor文は不要かも
+      for((hand, score) <- handAndScore){
+        if(max < score){
+          maxHand = hand
+          max = score
+        }
+        if(min > score){
+          minHand = hand
+          min = score
+        }
+      }
+
+      if(player == Black){
+        maxHand
+      }else{
+        minHand
+      }
+
+    }
   }
 
   // 3. alphabetaEval
   // 目的：
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    //ゲームオーバで黒-白の枚数差を返す。
+    if(gameOver(game)) return countDiff(game)
+    //深さゼロなら評価を返す。
+    if(depth == 0)     return heuristic(game)
+
+    val (board, player) = game
+    val handsAvailable: List[Position] = validMoves(board, player)
+    var nextGame: List[Game] = 
+      //スキップの場合はプレーヤを変更して続行。
+      if(handsAvailable == Nil){
+        (board, opponent(player)) :: Nil
+      }else{
+        handsAvailable.map(applyMove(board, player, _))
+      }
+
+    if(player == Black){
+      var v = Int.MinValue
+      var alpha = a
+      for(game <- nextGame){
+        v = max(v, alphabetaEval(heuristic, depth-1, alpha, b, game))
+        alpha = max(alpha, v)
+        if(alpha >= b){
+          return v
+        }
+      }
+      return v
+    }else{
+      var v = Int.MaxValue
+      var beta = b
+      for(game <- nextGame){
+        v = min(v, alphabetaEval(heuristic, depth-1, a, beta, game))
+        beta = min(beta, v)
+        if(beta <= a){
+          return v
+        }
+      }
+      return v
+    }
   }
 
   // 4. alphabeta
   // 目的：
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game => {
+      val (board, player) = game
+      //可能な手のリスト
+      val handsAvailable: List[Position] = validMoves(board, player)
+      //(可能な手，可能な盤面の評価値)のリストを作成
+      var handAndScore: List[(Position, Int)] = Nil
+      
+      for(thisHand: Position <- handsAvailable){
+        
+        val thisScore = 
+          if(player == Black){
+            alphabetaEval(
+              heuristic,
+              depth-1,
+              Int.MinValue,
+              Int.MaxValue,
+              applyMove(board, player, thisHand)
+            )
+          }else{
+            alphabetaEval(
+              heuristic,
+              depth-1,
+              Int.MaxValue,
+              Int.MinValue,
+              applyMove(board, player, thisHand)
+            )
+          }
+        handAndScore = (thisHand, thisScore) :: handAndScore
+      }
+
+      var (maxHand, max) = handAndScore.head
+      var (minHand, min) = handAndScore.head
+
+      for((hand, score) <- handAndScore){
+        if(max < score){
+          maxHand = hand
+          max = score
+        }
+        if(min > score){
+          minHand = hand
+          min = score
+        }
+      }
+
+      if(player == Black){
+        maxHand
+      }else{
+        minHand
+      }
+
+    }
   }
 }
 
@@ -319,45 +464,65 @@ object OthelloMain extends App {
   // どれか1つのコメントを外す
 
   // 黒, 白ともに firstMove
-  // playLoop(newGame, firstMove, firstMove)
+  //playLoop(newGame, firstMove, firstMove)
 
   // 黒：人間, 白：firstMove
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  //playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+  //playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 2))
+
+  //test1
+  //playLoop(newGame, minimax(countDiff, 5), minimax(countDiff, 5))
+  //test2
+  //playLoop(newGame, alphabeta(countDiff, 5), alphabeta(countDiff, 5))
+  //test3
+  //playLoop(newGame, alphabeta(countDiff, 6), alphabeta(countDiff, 4))
+  //test4
+  //playLoop(newGame, alphabeta(countDiff, 6), minimax(countDiff, 6))
 }
 
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略： MiniMax(depth:5)
+白の戦略： MiniMax(depth:5)
+黒 vs. 白の数： 38 - 26
+実行時間 (Total time)： 14s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：AlphaBeta(depth:5)
+白の戦略：AlphaBeta(depth:5)
+黒 vs. 白の数： 30 - 34
+実行時間 (Total time)： 2s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：AlphaBeta(depth:6)
+白の戦略：AlphaBeta(depth:4)
+黒 vs. 白の数： 30 - 34
+実行時間 (Total time)： 14s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：AlphaBeta(depth:6)
+白の戦略：MiniMax(depth:6)
+黒 vs. 白の数： 12 - 52
+実行時間 (Total time)： 63s
 
 考察：
+断言できること：
+  AlphaBetaがMiniMaxと比較して高速であることは歴然。
+断言できないこと：
+  実験が少ないかつ開始の状態や戦略にランダム性が一切存在しないため一概には言えないが，
+  depthが非対称の勝負にて，depthの大きさがピース数と勝敗に強い相関を持っているとは思えない。
+想像：
+  MiniMaxはABに対して網羅できるためそちらの方が(時間はかかるが)強いのではないか。有意ではないが実験4でも確認できる。
+思ったこといくつか：
+  そもそもアルゴリズムの実装が間違えであれば全て意味なし。
+  スライドを見たせいで「枝刈りの有無が結果を左右しないこと」が確認できるまで数値を変えて実験してしまった。バイアスがかかった行為のためここでは扱わないこととした。
+
 
 
 */
