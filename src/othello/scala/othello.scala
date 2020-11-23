@@ -317,16 +317,43 @@ object OthelloLib {
   }
 
   // 3. alphabetaEval
-  // 目的：
+  // 目的：alpha-beta法に基づいてゲームの状態を評価する
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    val (board, player) = game
+    if (gameOver(game)) countDiff(game)
+    else if (depth == 0) heuristic(game)
+    else if (validMoves(board, player) == Nil) alphabetaEval(heuristic,depth,a,b,(board, opponent(player)))
+    else {
+      if (player == Black) {
+        var v = -100
+        var alpha = a
+        for(pos <- validMoves(board, player)){
+          v = max(v, alphabetaEval(heuristic,depth - 1,alpha,b,applyMove(board,player,pos)))
+          alpha = max(v, alpha)
+         if(alpha >= b) v
+        }
+        v
+      }
+      else {
+        var v = 100
+        var beta = b
+        for(pos <- validMoves(board, player)){
+          v = min(v, alphabetaEval(heuristic,depth - 1,a,beta,applyMove(board,player,pos)))
+          beta = min(v, betaa)
+         if(a >= beta) v
+        }
+        v
+      }
+    }
   }
 
   // 4. alphabeta
-  // 目的：
+  // 目的：alpha-beta法に基づいて最適な手を求める
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game =>{
+      val (board, player) = game
+      val nextpose = validMoves(board,player)
+    }
   }
 }
 
