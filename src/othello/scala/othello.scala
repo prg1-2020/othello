@@ -377,7 +377,7 @@ object OthelloLib {
   /////////
 
   // 1. minimaxEval
-  // 目的：
+  // 目的：minimax法に基づいてゲームの状態を評価する
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
     val (board, player) = game;
     // val oppo = opponent(player);
@@ -418,7 +418,7 @@ object OthelloLib {
   }
 
   // 2. minimax
-  // 目的：
+  // 目的：minimax法に基づいて最適な手を示す
   def minimax(heuristic: Heuristic, depth: Int): Strategy = { game =>
     val (board, player) = game
     val validList = validMoves(board, player)
@@ -452,7 +452,7 @@ object OthelloLib {
   }
 
   // 3. alphabetaEval
-  // 目的：
+  // 目的：alphabeta法に基づいてゲームの状態を評価する
   def alphabetaEval(
       heuristic: Heuristic,
       depth: Int,
@@ -514,7 +514,7 @@ object OthelloLib {
   }
 
   // 4. alphabeta
-  // 目的：
+  // 目的：alphabeta法に基づいて最適な手を求める
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = { game =>
     val (board, player) = game
     val validList = validMoves(board, player)
@@ -572,39 +572,40 @@ object OthelloMain extends App {
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  playLoop(newGame, alphabeta(countDiff, 6), alphabeta(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+  // playLoop(newGame, alphabeta(countDiff, 6), alphabeta(countDiff, 4))
 }
 
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：minimax(countDiff,4)
+白の戦略：minimax(countDiff,4)
+黒 vs. 白の数：Black: 36, White: 28, Winner: Black
+実行時間 (Total time)：7s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 5)
+白の戦略：alphabeta(countDiff, 5)
+黒 vs. 白の数：Black: 38, White: 26, Winner: Black
+実行時間 (Total time)：12s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 6)
+白の戦略：alphabeta(countDiff, 6)
+黒 vs. 白の数：Black: 52, White: 12, Winner: Black
+実行時間 (Total time)：25s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：alphabeta(countDiff, 6)
+白の戦略：alphabeta(countDiff, 4)
+黒 vs. 白の数：Black: 62, White: 0, Winner: Black
+実行時間 (Total time)：11s
 
 考察：
-
-
+minimax法とalphabeta法は高速化の観点で違うだけなので終局したときの盤面は等しかった。
+実行時間は2/3倍程度高速化されていた。
+validMovesなどの実装がO(N^2)で重そうなので改善すればタイムが短縮されそう（高速化othello2では２倍から３倍程度早くなった。）
  */
