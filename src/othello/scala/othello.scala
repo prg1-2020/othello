@@ -242,25 +242,7 @@ object OthelloLib {
   def countDiff: Heuristic = {
     game => countPieces(game._1, Black) - countPieces(game._1, White)
   }
-
-  // 戦略の適用
-  def applyStrategy(game: Game, strategy: Strategy): Game = {
-    val (board, player) = game
-    val nextPlayer = opponent(player)
-    if (!(posList.foldRight(false)((p, b) => b || outflanks(board, player, p)))) {
-       printf("skip!\n");
-       (board, nextPlayer)
-    }
-    else {
-      val pos = strategy(game)
-      if (!(outflanks(board, player, pos))) {
-        throw new Exception("invalid move")
-      }
-      else {
-        applyMove(board, player, pos)
-      }
-    }
-  }
+  
 
   // ゲームの開始
   def playLoop(game: Game, strat1: Strategy, strat2: Strategy): Game = {
@@ -310,7 +292,7 @@ object OthelloLib {
       player match {
         case Black => newList.max._2
         case White => newList.min._2
-      }
+    }
   }
 
   // 3. alphabetaEval
@@ -365,13 +347,16 @@ object OthelloMain extends App {
   //playLoop(newGame, firstMove, firstMove)
 
   // 黒：人間, 白：firstMove
-  // playLoop(newGame, human, firstMove)
+  //playLoop(newGame, alphabeta(boardEval, 4), firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
   //playLoop(newGame, minimax(countDiff, 5), minimax(countDiff, 2))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  //playLoop(newGame, alphabeta(countDiff, 5), alphabeta(countDiff, 2))
+  //playLoop(newGame, alphabeta(boardEval, 4),alphabeta(countDiff, 3))
+  
+  // 実験用
+  playLoop(newGame, alphabeta(countDiff, 4),alphabeta(countDiff, 4))
 }
 
 // 5. 実験結果
