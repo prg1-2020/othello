@@ -285,79 +285,191 @@ object OthelloLib {
   /////////
   // 課題 //
   /////////
-
-  // 1. minimaxEval
-  // 目的：
+// 1. minimaxEval
+  // 目的：minimax 法に基づいてゲームの状態を評価する
   def minimaxEval(heuristic: Heuristic, depth: Int, game: Game): Int = {
-    0
+    if(gameOver(game))  countDiff(game)
+    if(depth == 0)  heuristic(game)
+    val (board, player) = game
+    var nextGame: List[Game] = 
+      if(validMoves(board, player) == Nil){(board, opponent(player)) :: Nil}
+      else{validMoves(board, player).map(applyMove(board, player, _))}
+    val nextScores: List[Int] = nextGame.map(minimaxEval(heuristic, depth-1, _))
+   if(player == Black) nextScores.max
+   else nextScores.min
   }
 
-  // 2. minimax
-  // 目的：
+   // 2. minimax
+  // 目的：minimax 法に基づいて最適な手を求める
   def minimax(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+    game => {
+      val (board, player) = game
+      //可能な手のリスト
+      val handsAvailable: List[Position] = validMoves(board, player)
+      //(可能な手，可能な盤面の評価値)のリストを作成
+      var handAndScore: List[(Position, Int)] = Nil
+
+      for(first: Position <- handsAvailable){
+         val first2: Int = minimaxEval(heuristic,depth-1,applyMove(board, player, first))
+        handAndScore = (first, first2) :: handAndScore
+      }
+
+      var (maxH, max) = handAndScore.head
+      var (minH, min) = handAndScore.head
+      for((hand, score) <- handAndScore){
+        if(max < score) maxH = hand
+                        max = score
+        
+        if(min > score) minH = hand
+                        min = score
+        }
+      if(player == Black) maxH
+      else minH
+    }
   }
 
   // 3. alphabetaEval
-  // 目的：
+  // 目的：alpha-beta 法に基づいてゲームの状態を評価する
   def alphabetaEval(heuristic: Heuristic, depth: Int, a: Int, b: Int, game: Game): Int = {
-    0
+    //ゲームオーバで黒-白の枚数差を返す。
+    if(gameOver(game)) return countDiff(game)
+    //深さゼロなら評価を返す。
+    if(depth == 0)     return heuristic(game)
+
+    val (board, player) = game
+    val handsAvailable: List[Position] = validMoves(board, player)
+    var nextGame: List[Game] = 
+      //スキップの場合はプレーヤを変更して続行。
+      if(handsAvailable == Nil){
+        (board, opponent(player)) :: Nil
+      }else{
+        handsAvailable.map(applyMove(board, player, _))
+      }
+
+    if(player == Black){
+      var v = Int.MinValue
+      var alpha = a
+      for(game <- nextGame){
+        v = max(v, alphabetaEval(heuristic, depth-1, alpha, b, game))
+        alpha = max(alpha, v)
+        if(alpha >= b){
+          return v
+        }
+      }
+      return v
+    }
+    else{
+      var v = Int.MaxValue
+      var beta = b
+      for(game <- nextGame){
+        v = min(v, alphabetaEval(heuristic, depth-1, a, beta, game))
+        beta = min(beta, v)
+        if(beta <= a){
+          return v
+        }
+      }
+      return v
+    }
   }
 
   // 4. alphabeta
   // 目的：
   def alphabeta(heuristic: Heuristic, depth: Int): Strategy = {
-    game =>
-      (1, 1)
+     game => {
+      val (board, player) = game
+      //可能な手のリスト
+      val handsAvailable: List[Position] = validMoves(board, player)
+      //(可能な手，可能な盤面の評価値)のリストを作成
+      var handAndScore: List[(Position, Int)] = Nil
+      for(first: Position <- handsAvailable){
+        val first2 = 
+          if(player == Black){
+            alphabetaEval(heuristic,depth-1,Int.MinValue,Int.MaxValue,applyMove(board, player, first))
+          }else{
+            alphabetaEval(heuristic,depth-1,Int.MaxValue,Int.MinValue,applyMove(board, player, first))
+          }
+        handAndScore = (first, first2) :: handAndScore
+      }
+
+      var (maxH, max) = handAndScore.head
+      var (minH, min) = handAndScore.head
+
+      for((hand, score) <- handAndScore){
+        if(max < score){
+          maxH = hand
+          max = score
+        }
+        if(min > score){
+          minH = hand
+          min = score
+        }
+      }
+
+      if(player == Black){
+        maxH
+      }else{
+        minH
+      }
+
+    }
   }
 }
 
 object OthelloMain extends App {
   import OthelloLib._
-
+  
   // どれか1つのコメントを外す
 
   // 黒, 白ともに firstMove
-  // playLoop(newGame, firstMove, firstMove)
+  //playLoop(newGame, firstMove, firstMove)
 
   // 黒：人間, 白：firstMove
   // playLoop(newGame, human, firstMove)
 
   // 黒, 白ともに深さ4の minimax 法
-  // playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
+  //playLoop(newGame, minimax(countDiff, 4), minimax(countDiff, 4))
 
   // 黒, 白ともに深さ4の alpha-beta 法
-  // playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+  //playLoop(newGame, alphabeta(countDiff, 4), alphabeta(countDiff, 4))
+
+  //test1
+  //playLoop(newGame, minimax(countDiff, 5), minimax(countDiff, 5))
+  //test2
+  //playLoop(newGame, alphabeta(countDiff, 5), alphabeta(countDiff, 5))
+  //test3
+  //playLoop(newGame, alphabeta(countDiff, 6), alphabeta(countDiff, 4))
+  //test4
+  //playLoop(newGame, alphabeta(countDiff, 6), minimax(countDiff, 6))
 }
 
 // 5. 実験結果
 /*
 実験１
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略： MiniMax(depth:5)
+白の戦略： MiniMax(depth:5)
+黒 vs. 白の数： 38 - 26
+実行時間 (Total time)： 14s
 
 実験２
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：AlphaBeta(depth:5)
+白の戦略：AlphaBeta(depth:5)
+黒 vs. 白の数： 30 - 34
+実行時間 (Total time)： 2s
 
 実験３
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：AlphaBeta(depth:6)
+白の戦略：AlphaBeta(depth:4)
+黒 vs. 白の数： 30 - 34
+実行時間 (Total time)： 14s
 
 実験４
-黒の戦略：
-白の戦略：
-黒 vs. 白の数：
-実行時間 (Total time)：
+黒の戦略：AlphaBeta(depth:6)
+白の戦略：MiniMax(depth:6)
+黒 vs. 白の数： 12 - 52
+実行時間 (Total time)： 63s
 
 考察：
-
+AlphaBeta法だと明らかMiniMax法より高速になる。
+白と黒のdepthの差が結果に及ぼす影響はあまり大きくない
 
 */
