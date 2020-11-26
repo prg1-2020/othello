@@ -415,7 +415,6 @@ object OthelloLib {
   }
 }
 
-
 object OthelloMain extends App {
   import OthelloLib._
   
@@ -471,6 +470,6 @@ object OthelloMain extends App {
 
 考察：
 AlphaBeta法だと明らかMiniMax法より高速になる。
-白と黒のdepthの差が結果に及ぼす影響はあまり大きくない。
+白と黒のdepthの差が結果に及ぼす影響はあまり大きくない
 
 */
