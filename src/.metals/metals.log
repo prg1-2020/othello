@@ -1,0 +1,101 @@
+2020.11.10 14:59:38 INFO  started: Metals version 0.9.4 in workspace 'C:\Users\tomohiro\othello\src' for client vscode.
+2020.11.10 14:59:45 INFO  time: initialize in 6.69s
+2020.11.10 14:59:48 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.10 15:00:03 INFO  no build target: using presentation compiler with only scala-library
+2020.11.10 15:00:03 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 15:26:17 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.10 15:41:52 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 16:04:05 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 16:06:38 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 20:43:31 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.10 20:44:06 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 20:48:21 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+11åé 10, 2020 8:49:40 åﬂå„ org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+åxçê: Unmatched cancel notification for request id 1857
+2020.11.10 20:58:26 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+11åé 10, 2020 9:02:15 åﬂå„ org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+åxçê: Unmatched cancel notification for request id 2346
+2020.11.10 21:17:55 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 21:19:42 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 21:20:09 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.10 21:22:22 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 21:27:55 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 21:32:40 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 21:32:55 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+11åé 10, 2020 9:35:35 åﬂå„ org.eclipse.lsp4j.jsonrpc.RemoteEndpoint handleCancellation
+åxçê: Unmatched cancel notification for request id 3449
+2020.11.10 21:35:46 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.10 21:35:46 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 21:42:27 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 21:44:24 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.10 21:44:24 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 21:44:30 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 22:02:35 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.10 22:03:19 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.10 22:03:27 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 13:08:29 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 13:23:08 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 13:24:11 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 13:57:00 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.11 13:57:00 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.11 13:57:37 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.11 13:57:37 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+something's wrong: no file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala in List[<error>]RangePosition(file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala, 9479, 9479, 9493)
+something's wrong: no file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala in List[<error>]RangePosition(file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala, 9479, 9479, 9486)
+something's wrong: no file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala in List[<error>]RangePosition(file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala, 9479, 9479, 9487)
+something's wrong: no file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala in List[othello.OthelloLib.Position]RangePosition(file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala, 9479, 9479, 9493)
+2020.11.11 14:06:05 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 14:09:19 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 14:11:44 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+something's wrong: no file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala in (othello.OthelloLib.Position, Int)RangePosition(file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala, 9484, 9484, 9497)
+2020.11.11 14:12:06 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 14:13:22 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 14:17:38 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 14:18:23 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 14:20:15 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.11 14:20:15 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 14:21:02 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.11 14:22:20 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.13 11:48:03 INFO  Started: Metals version 0.9.5 in workspace 'C:\Users\tomohiro\othello\src' for client vscode.
+2020.11.13 11:48:07 INFO  time: initialize in 3.98s
+2020.11.13 11:48:12 WARN  Build server is not auto-connectable.
+2020.11.13 11:48:12 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.13 11:48:12 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.13 11:48:20 INFO  no build target: using presentation compiler with only scala-library
+something's wrong: no file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala in List[othello.OthelloLib.Position]RangePosition(file:///C:/Users/tomohiro/othello/src/othello/scala/othello.scala, 8794, 8794, 8808)
+2020.11.16 12:20:28 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.16 12:20:34 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.16 12:32:40 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.16 12:32:57 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:32:49 WARN  no build tool detected in workspace 'C:\Users\tomohiro\othello\src'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2020.11.16 22:32:49 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:33:36 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:34:35 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:38:37 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:40:10 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:40:43 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:41:17 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:46:47 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:56:05 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:57:45 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 22:59:35 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:01:12 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:02:23 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:08:26 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:10:30 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:20:01 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:20:18 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:21:16 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:32:17 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:32:30 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:34:02 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:35:15 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:36:17 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:37:15 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:39:12 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:43:19 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:49:24 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:52:07 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+2020.11.16 23:52:25 WARN  no build target for: C:\Users\tomohiro\othello\src\othello\scala\othello.scala
+11åé 16, 2020 11:53:01 åﬂå„ org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+èÓïÒ: Unsupported notification method: $/setTraceNotification
